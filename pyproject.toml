@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "dul2023"
+version = "0.1.0"
+description = ""
+authors = ["Andres Ladino <aladinoster@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+jupyterlab = "^3.6.3"
+jupyterlab-myst = "^1.2.0"
+torch = "^2.0.1"
+plotly = "^5.14.1"
+pandas = "^2.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
