@@ -1,32 +1,44 @@
-use std::sync::atomic::{AtomicI32, Ordering};
 use std::sync::Arc;
+use std::sync::Mutex;
 use std::thread;
 
-struct Accumulator(AtomicI32);
+struct Accumulator {
+    sum: i32,
+    operation_count: i32,
+}
 
 impl Accumulator {
-    fn new(value: i32) -> Self {
-        Accumulator(AtomicI32::new(value))
+    fn new(sum: i32) -> Accumulator {
+        Accumulator {
+            sum,
+            operation_count: 0,
+        }
     }
 
-    fn fetch_add(&self, val: i32, order: Ordering) -> i32 {
-        self.0.fetch_add(val, order)
+    fn add(&mut self, increment: i32) {
+        self.sum += increment;
+        self.operation_count += 1;
     }
 
-    fn load(&self, order: Ordering) -> i32 {
-        self.0.load(order)
+    fn get_sum(&self) -> i32 {
+        self.sum
+    }
+
+    fn get_count(&self) -> i32 {
+        self.operation_count
     }
 }
 
 fn add(n1: i32, n2: i32) -> i32 {
-    let sum = Arc::new(Accumulator::new(n1));
+    let acc = Arc::new(Mutex::new(Accumulator::new(n1)));
     let (count, increment) = if n2 > 0 { (n2, 1) } else { (-n2, -1) };
     let mut handles = vec![];
 
     for _ in 0..count {
-        let inner_sum = Arc::clone(&sum);
+        let inner_acc = Arc::clone(&acc);
         handles.push(thread::spawn(move || {
-            inner_sum.fetch_add(increment, Ordering::SeqCst);
+            let mut guarded_acc = inner_acc.lock().unwrap();
+            guarded_acc.add(increment);
         }));
     }
 
@@ -34,7 +46,8 @@ fn add(n1: i32, n2: i32) -> i32 {
         handle.join().unwrap();
     }
 
-    sum.load(Ordering::SeqCst)
+    let final_acc = acc.lock().unwrap();
+    final_acc.get_sum()
 }
 
 fn main() {
