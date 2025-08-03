@@ -24,9 +24,11 @@ impl Accumulator {
         self.sum
     }
 
+    /*
     fn get_count(&self) -> i32 {
         self.operation_count
     }
+    */
 }
 
 fn add(n1: i32, n2: i32) -> i32 {
