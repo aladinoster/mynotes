@@ -28,3 +28,7 @@ path = "src/try_borrow.rs"
 [[bin]]
 name = "sum_concurrent"
 path = "src/sum_concurrent.rs"
+
+[[bin]]
+name = "sum_mutex"
+path = "src/sum_mutex.rs"
