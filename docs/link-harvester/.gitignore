@@ -1,0 +1,7 @@
+# Python
+*.py
+*.pyc
+.venv/
+__pycache__/
+uv.lock
+.python-version
