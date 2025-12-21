@@ -65,8 +65,19 @@ int main() {
   size_t sizeRGB = width * height * 3 * sizeof(unsigned char);
   size_t sizeGray = width * height * sizeof(unsigned char);
 
-  cudaMalloc((void **)&d_Pin, sizeRGB);
-  cudaMalloc((void **)&d_Pout, sizeGray);
+  cudaError_t err_in = cudaMalloc((void **)&d_Pin, sizeRGB);
+  if (err_in != cudaSuccess) {
+    std::cerr << "CUDA Malloc failed: " << cudaGetErrorString(err_in)
+              << std::endl;
+    return -1;
+  }
+
+  cudaError_t err_ou = cudaMalloc((void **)&d_Pout, sizeGray);
+  if (err_ou != cudaSuccess) {
+    std::cerr << "CUDA Malloc failed: " << cudaGetErrorString(err_ou)
+              << std::endl;
+    return -1;
+  }
 
   // 4. COPY DATA: Host to Device
   cudaMemcpy(d_Pin, h_Pin, sizeRGB, cudaMemcpyHostToDevice);
@@ -80,8 +91,21 @@ int main() {
   std::cout << "Launching CUDA Kernel..." << std::endl;
   colorToGrayScaleKernel<<<dimGrid, dimBlock>>>(d_Pout, d_Pin, width, height);
 
-  // Synchronize to check for kernel errors
-  cudaDeviceSynchronize();
+  // Check for immediate launch errors (like invalid dimensions)
+  cudaError_t errLaunch = cudaGetLastError();
+  if (errLaunch != cudaSuccess) {
+    std::cerr << "Kernel launch error: " << cudaGetErrorString(errLaunch)
+              << std::endl;
+    return -1;
+  }
+
+  // Synchronize and check for execution errors
+  cudaError_t errSync = cudaDeviceSynchronize();
+  if (errSync != cudaSuccess) {
+    std::cerr << "Kernel execution error: " << cudaGetErrorString(errSync)
+              << std::endl;
+    return -1;
+  }
 
   // 7. COPY RESULT: Device back to Host
   cudaMemcpy(h_Pout, d_Pout, sizeGray, cudaMemcpyDeviceToHost);

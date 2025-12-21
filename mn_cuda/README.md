@@ -19,5 +19,10 @@ sudo apt install cuda
 ## Compile
 
 ```bash
-nvcc -o vecAdd vecAdd.cu
+nvcc -arch=sm_89 -o vecAdd vecAdd.cu
+```
+
+```bash
+nvcc -arch=sm_89 -o imageConverter colortoGrayScaleConversion.cu
+
 ```
