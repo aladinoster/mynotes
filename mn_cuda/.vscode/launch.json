@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "CUDA C++: Launch Active File",
+            "type": "cuda-gdb",
+            "request": "launch",
+            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "preLaunchTask": "CUDA Build Active File",
+            "cwd": "${fileDirname}"
+        }
+    ]
+}

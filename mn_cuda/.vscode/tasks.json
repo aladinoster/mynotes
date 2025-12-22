@@ -1,0 +1,17 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+        {
+            "label": "CUDA: Build (Debug)",
+            "type": "shell",
+            "command": "nvcc -arch=sm_89 -g -G ${file} -o ${fileDirname}/${fileBasenameNoExtension}",
+            "group": "build"
+        },
+        {
+            "label": "CUDA: Build (Release)",
+            "type": "shell",
+            "command": "nvcc -arch=sm_89 -O3 ${file} -o ${fileDirname}/${fileBasenameNoExtension}",
+            "group": "build"
+        }
+    ]
+}
