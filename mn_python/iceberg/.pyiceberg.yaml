@@ -1,0 +1,4 @@
+catalog:
+  default:
+    type: in-memory
+    warehouse: ~/data/mycatalog
